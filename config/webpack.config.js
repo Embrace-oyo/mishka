@@ -38,8 +38,8 @@ const shouldInlineRuntimeChunk = process.env.INLINE_RUNTIME_CHUNK !== 'false';
 const useTypeScript = fs.existsSync(paths.appTsConfig);
 
 // style files regexes
-const cssRegex = /\.css$/;
-const cssModuleRegex = /\.module\.css$/;
+const cssRegex = /\.css|styl$/;
+const cssModuleRegex = /\.module\.(css|styl)$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
 
@@ -272,6 +272,7 @@ module.exports = function(webpackEnv) {
         // Support React Native Web
         // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
         'react-native': 'react-native-web',
+	    '@': path.resolve(__dirname, '../src'),
       },
       plugins: [
         // Adds support for installing with Plug'n'Play, leading to faster installs and adding
@@ -398,10 +399,13 @@ module.exports = function(webpackEnv) {
             {
               test: cssRegex,
               exclude: cssModuleRegex,
-              use: getStyleLoaders({
-                importLoaders: 1,
-                sourceMap: isEnvProduction && shouldUseSourceMap,
-              }),
+              use: getStyleLoaders(
+              	{
+                 	importLoaders: 1,
+					sourceMap: isEnvProduction && shouldUseSourceMap,
+              	},
+			  'stylus-loader'
+              ),
               // Don't consider CSS imports dead code even if the
               // containing package claims to have no side effects.
               // Remove this when webpack adds a warning or an error for this.
@@ -412,12 +416,15 @@ module.exports = function(webpackEnv) {
             // using the extension .module.css
             {
               test: cssModuleRegex,
-              use: getStyleLoaders({
-                importLoaders: 1,
-                sourceMap: isEnvProduction && shouldUseSourceMap,
-                modules: true,
-                getLocalIdent: getCSSModuleLocalIdent,
-              }),
+              use: getStyleLoaders(
+              	{
+					importLoaders: 1,
+					sourceMap: isEnvProduction && shouldUseSourceMap,
+					modules: true,
+					getLocalIdent: getCSSModuleLocalIdent,
+              	},
+				'stylus-loader'
+              ),
             },
             // Opt-in support for SASS (using .scss or .sass extensions).
             // By default we support SASS Modules with the

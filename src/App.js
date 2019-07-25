@@ -1,26 +1,33 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+import 'normalize.css'
+import '@/assets/stylus/base.styl'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import Header from '@/pages/Header'
+import Footer from '@/pages/Footer'
+import Home from '@/pages/Home'
+import List from '@/pages/List'
+import News from '@/pages/News'
+import Detail from '@/pages/Detail'
+
+class App extends React.Component{
+	render() {
+		return(
+			<div className="App">
+				<Router>
+					<Header />
+					<div className="Router">
+						<Route path='/' Redirect component={Home} exact/>
+						<Route path='/home' component={Home} exact/>
+						<Route path='/list' component={List} />
+						<Route path='/news' component={News} />
+						<Route path='/detail' component={Detail} />
+					</div>
+					<Footer />
+				</Router>
+			</div>
+		)
+	}
 }
 
 export default App;
