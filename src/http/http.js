@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseUrl = ''
+const baseUrl = 'http://www.embracek.cn/api/'
 
 let axios_http = axios.create({
 	baseURL: baseUrl,
