@@ -28,6 +28,16 @@ const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 
 const postcssNormalize = require('postcss-normalize');
 
+// 移动端适配添加 - 插入
+const postcssAspectRatioMini = require('postcss-aspect-ratio-mini');
+const postcssPxToViewport = require('postcss-px-to-viewport');
+const postcssWriteSvg = require('postcss-write-svg');
+const postcssCssnext = require('postcss-preset-env'); //这个插件已经更新 postcss-preset-env 所以请使用 "postcss-preset-env": "6.0.6",
+const postcssViewportUnits = require('postcss-viewport-units');
+const cssnano = require('cssnano');
+
+
+
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
 // Some apps do not need the benefits of saving a web request, so not inlining the chunk
@@ -42,6 +52,8 @@ const cssRegex = /\.css|styl$/;
 const cssModuleRegex = /\.module\.(css|styl)$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
+const lessRegex = /\.less$/;
+const lessModuleRegex = /\.module\.less$/;
 
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
@@ -101,6 +113,33 @@ module.exports = function(webpackEnv) {
             // so that it honors browserslist config in package.json
             // which in turn let's users customize the target behavior as per their needs.
             postcssNormalize(),
+		    // -----插入适配移动端配置项-----👇
+		    postcssAspectRatioMini({}),
+		    postcssPxToViewport({
+			  viewportWidth: 750, // (Number) The width of the viewport.
+			  viewportHeight: 1334, // (Number) The height of the viewport.
+			  unitPrecision: 3, // (Number) The decimal numbers to allow the REM units to grow to.
+			  viewportUnit: 'vw', // (String) Expected units.
+			  selectorBlackList: ['.ignore', '.hairlines'], // (Array) The selectors to ignore and leave as px.
+			  minPixelValue: 1, // (Number) Set the minimum pixel value to replace.
+			  mediaQuery: false // (Boolean) Allow px to be converted in media queries.
+		    }),
+		    postcssWriteSvg({
+			  utf8: false
+		    }),
+		    postcssCssnext({}),
+		    postcssViewportUnits({}),
+		    cssnano({
+			  //旧的 --坑点
+			  // preset: "advanced",
+			  // autoprefixer: false,
+			  // "postcss-zindex": false
+			  //新配置继续使用高级配置,按照这个配置
+			  "cssnano-preset-advanced": {
+				  zindex: false,
+				  autoprefixer: false
+			  },
+		    })
           ],
           sourceMap: isEnvProduction && shouldUseSourceMap,
         },
@@ -459,6 +498,24 @@ module.exports = function(webpackEnv) {
                 'sass-loader'
               ),
             },
+			  {
+				  test: lessRegex,
+				  exclude: lessModuleRegex,
+				  use: getStyleLoaders({ importLoaders: 2 }, 'less-loader'),
+			  },
+			  // Adds support for CSS Modules, but using SASS
+			  // using the extension .module.scss or .module.sass
+			  {
+				  test: lessModuleRegex,
+				  use: getStyleLoaders(
+					  {
+						  importLoaders: 2,
+						  modules: true,
+						  getLocalIdent: getCSSModuleLocalIdent,
+					  },
+					  'less-loader'
+				  ),
+			  },
             // "file" loader makes sure those assets get served by WebpackDevServer.
             // When you `import` an asset, you get its (virtual) filename.
             // In production, they would get copied to the `build` folder.

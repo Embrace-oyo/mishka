@@ -15,8 +15,6 @@ class Main extends React.Component{
 					<Route path='/home' component={Home} />
 					<Route path='/product' component={Product} />
 					<Route path='/role' component={Role} />
-					<Route path='/404' component={NotFound} />
-					<Redirect to="/404" />
 				</Switch>
 			</div>
 		)

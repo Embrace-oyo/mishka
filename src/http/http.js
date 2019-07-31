@@ -28,5 +28,10 @@ axios_http.interceptors.response.use(
 	}
 )
 
+export default {
+	get: (url, params) => axios_http.get(url, { params: params }),
+	post: (url, params, config) => axios_http.post(url, params, config),
+	put:(url, params) => axios_http.put(url, params),
+	all: (arr) => axios_http.all(arr)
+}
 
-export default axios_http
