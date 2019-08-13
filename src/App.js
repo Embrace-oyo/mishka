@@ -1,5 +1,6 @@
 import React from 'react';
 import {BrowserRouter, Switch, Route} from "react-router-dom";
+import 'reset.css';
 
 /** 路由组件 **/
 import Login from '@/pages/login/login'
