@@ -9,13 +9,14 @@ class Login extends React.Component {
 	handleSubmit = (e) => {
 		e.preventDefault();
 		const { validateFields } = this.props.form;
-		validateFields((errors, values) => {
+		validateFields( async (errors, values) => {
 			if(!errors){
-				api.loginApi({phone: values.username, password: values.password}).then(res => {
-					console.log(res);
-				}).catch(error => {
-					console.log(error);
-				})
+				try{
+					const res = await api.loginApi({phone: values.username, password: values.password});
+					console.log(res)
+				}catch (e) {
+					console.log(e)
+				}
 			}
 		});
 	};
