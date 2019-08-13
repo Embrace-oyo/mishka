@@ -1,20 +1,20 @@
 import React from 'react'
-import '@/assets/css/login.less'
-import { Form, Icon, Input, Button, Checkbox } from 'antd';
+import './login.less'
+import { Form, Icon, Input, Button } from 'antd';
 
 
 /** 登录路由组件 **/
 
-export default class Login extends React.Component {
-	handleSubmit = e => {
+class Login extends React.Component {
+	handleSubmit = (e) => {
 		e.preventDefault();
-		this.props.form.validateFields((err, values) => {
-			if (!err) {
-				console.log('Received values of form: ', values);
-			}
+		const { validateFields } = this.props.form;
+		validateFields((errors, values) => {
+			!errors ? console.log(values) : console.log('校验失败');
 		});
 	};
 	render() {
+		const { getFieldDecorator } = this.props.form;
 		return (
 			<div className="login">
 				<div className="loginBox">
@@ -22,27 +22,40 @@ export default class Login extends React.Component {
 					<div className="formBox">
 						<Form onSubmit={this.handleSubmit} className="login-form">
 							<Form.Item>
-								<Input
-									prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-									placeholder="Username"
-								/>
+								{getFieldDecorator('username',{
+									rules: [
+										{ required: true, whitespace: true, message: '请输入用户名' },
+										{ min: 4, message: '用户名必须大于4位' },
+										{ max: 12, message: '用户名必须小于12位' },
+										{ pattern: /^[A-Za-z0-9_]+$/, message: '必须是英文数字下划线组成' },
+									],
+								})(
+									<Input
+										prefix={<Icon type="user" style={{ color: '#fb7299' }} />}
+										placeholder="账号"
+									/>
+								)}
 							</Form.Item>
 							<Form.Item>
-								<Input
-									prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
-									type="password"
-									placeholder="Password"
-								/>
+								{getFieldDecorator('password', {
+									rules: [
+										{ required: true, whitespace: true, message: '请输入密码' },
+										{ min: 4, message: '密码必须大于等于4位' },
+										{ max: 12, message: '密码必须小于等于12位' },
+										{ pattern: /^[A-Za-z0-9_]+$/, message: '必须是英文数字下划线组成' },
+									],
+								})(
+									<Input
+										prefix={<Icon type="lock" style={{ color: '#fb7299' }} />}
+										type="password"
+										placeholder="密码"
+									/>
+								)}
 							</Form.Item>
 							<Form.Item>
-								<Checkbox>Remember me</Checkbox>
-								<a className="login-form-forgot" href="">
-									Forgot password
-								</a>
 								<Button type="primary" htmlType="submit" className="login-form-button">
-									Log in
+									登录
 								</Button>
-								Or <a href="">register now!</a>
 							</Form.Item>
 						</Form>
 					</div>
@@ -51,3 +64,6 @@ export default class Login extends React.Component {
 		)
 	}
 }
+const WrappedNormalLoginForm = Form.create({ name: 'normal_login' })(Login);
+
+export default WrappedNormalLoginForm
