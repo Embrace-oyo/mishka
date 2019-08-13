@@ -1,7 +1,7 @@
 import React from 'react'
 import './login.less'
 import { Form, Icon, Input, Button } from 'antd';
-
+import api from '../../api'
 
 /** 登录路由组件 **/
 
@@ -10,7 +10,13 @@ class Login extends React.Component {
 		e.preventDefault();
 		const { validateFields } = this.props.form;
 		validateFields((errors, values) => {
-			!errors ? console.log(values) : console.log('校验失败');
+			if(!errors){
+				api.loginApi({phone: values.username, password: values.password}).then(res => {
+					console.log(res);
+				}).catch(error => {
+					console.log(error);
+				})
+			}
 		});
 	};
 	render() {
@@ -42,7 +48,7 @@ class Login extends React.Component {
 										{ required: true, whitespace: true, message: '请输入密码' },
 										{ min: 4, message: '密码必须大于等于4位' },
 										{ max: 12, message: '密码必须小于等于12位' },
-										{ pattern: /^[A-Za-z0-9_]+$/, message: '必须是英文数字下划线组成' },
+										/*{ pattern: /^[A-Za-z0-9_]+$/, message: '必须是英文数字下划线组成' },*/
 									],
 								})(
 									<Input
